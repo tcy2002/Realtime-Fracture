@@ -1,0 +1,115 @@
+﻿@startuml
+
+class VoronoiFracture {
+# GenerateNewMeshes()
+}
+
+class DelaunayCalculator {
+# Triangulate()
+# GetPointCount()
+# GetPointAt()
+# GetAdjacentPoints()
+AddBoundingBox()
+BowyerWatson()
+RemoveBoundingBox()
+}
+
+class VoronoiCalculator {
+# Calculate()
+# SegMesh()
+# SegPoint()
+# SegPlane()
+AddTriangles()
+}
+
+class PointsGenerator {
+# Type
+# Range
+# NumInside
+# NumSurface
+# NumOutside
+# GeneratePoints()
+}
+
+class MathTool {
+# Approximately()
+# Average()
+# CalcVolume()
+# CalcCircumsphere()
+# CalcIntersection()
+# CalcSide()
+# IsInsideSphere()
+# IsOnLine()
+# IsOnPlane()
+# Sort3()
+}
+
+class TriangleDiagram {
+# PointCount
+# TriangleCount
+# TetrahedronCount
+# AddPoint()
+# AddPointDirectly()
+# GetPointAt()
+# RemovePointAt()
+# ()...
+# ImportFromMesh()
+# ExportToMesh()
+}
+
+class OrderedHash {
+# []
+# Count
+# Contains()
+# IndexOf()
+# Add()
+# Remove()
+# RemoveAt()
+# Clear()
+# ToList()
+# ToArray()
+# GetEnumerator()
+Hash()
+}
+
+class Point {
+# Position
+# PolygonId
+# GetHashCode()
+# Equals()
+}
+
+class Triangle {
+# PointIndices
+# Index
+# HasPoint()
+# GetHashCode()
+# Equals()
+}
+
+class Tetrahedron {
+# TriangleIndices
+# Circumcneter
+# Circumradius
+# HasTriangle()
+}
+
+TriangleDiagram - OrderedHash
+TriangleDiagram -- Point
+TriangleDiagram -- Triangle
+TriangleDiagram -- Tetrahedron
+
+
+VoronoiCalculator - DelaunayCalculator
+VoronoiCalculator - TriangleDiagram
+DelaunayCalculator - TriangleDiagram
+
+VoronoiCalculator -- MathTool
+DelaunayCalculator -- MathTool
+PointsGenerator - MathTool
+
+VoronoiFracture - VoronoiCalculator
+VoronoiFracture -- PointsGenerator
+
+
+@enduml
