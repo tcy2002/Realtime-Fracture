@@ -143,9 +143,6 @@ namespace Fracture.MyVoronoi
                         badTetrahedrons.Add(i);
                     }
                 }
-                
-                // Debug.Log($"bad tetrahedron count: {badTetrahedrons.Count}");
-                // throw new Exception("stop");
 
                 // 寻找需要删除和保留的三角面片
                 var badTriangles = new List<int>();
@@ -167,10 +164,7 @@ namespace Fracture.MyVoronoi
                         }
                     }
                 }
-                
-                // Debug.Log($"good triangle count: {goodTriangles.Count}, bad triangle count: {badTriangles.Count}");
-                // throw new Exception("stop");
-                
+
                 // 点p在三角形所在平面内，说明这个面不需要构建新的四面体，需要被删除
                 for (var i = 0; i < goodTriangles.Count; i++)
                 {
@@ -192,9 +186,6 @@ namespace Fracture.MyVoronoi
                         goodTriangles.RemoveAt(i--);
                     }
                 }
-                
-                // Debug.Log($"good triangle count: {goodTriangles.Count}, bad triangle count: {badTriangles.Count}");
-                // throw new Exception("stop");
 
                 // 删除需要删除的四面体
                 for (var i = badTetrahedrons.Count - 1; i >= 0; i--)

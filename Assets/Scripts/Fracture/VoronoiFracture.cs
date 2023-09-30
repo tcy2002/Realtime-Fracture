@@ -9,7 +9,6 @@ namespace Fracture
     public class VoronoiFracture : MonoBehaviour
     {
         private readonly VoronoiCalculator _voronoiCalculator = new();
-        private readonly VoronoiCalculatorOld _voronoiCalculatorOld = new();
         private readonly PointsGenerator _pointsGenerator = new();
 
         public PointsGenerator.FracType type = PointsGenerator.FracType.SemiSphere;
@@ -25,12 +24,9 @@ namespace Fracture
         private bool _flag;
         private Mesh _mesh;
         private float _volume;
-        private float _startTime = 0.0f;
+        private float _startTime;
         private float _minVolume;
-        
-        public bool ifSpring;
-        public bool ifCurve;
-        
+
         void Start()
         {
             _mesh = GetComponent<MeshFilter>().mesh;
@@ -128,14 +124,7 @@ namespace Fracture
             // 计算碰撞点处的Voronoi图分割
             List<Mesh> newMeshes;
             List<List<int>> adjacentList;
-            if (ifCurve)
-            {
-                _voronoiCalculatorOld.Calculate(_mesh, points, out newMeshes, out adjacentList);
-            }
-            else
-            {
-                _voronoiCalculator.Calculate(_mesh, points, out newMeshes, out adjacentList);
-            }
+            _voronoiCalculator.Calculate(_mesh, points, out newMeshes, out adjacentList);
             var newFragments = new List<GameObject>();
 
             // 生成新的网格体
@@ -190,48 +179,6 @@ namespace Fracture
                 }
                 
                 newFragments.Add(newGameObject);
-            }
-
-            if (ifSpring)
-            {
-                HashSet<(int, int)> connectedPairs = new HashSet<(int, int)>();
-                for (var i = 0; i < newFragments.Count; i++)
-                {
-                    if (newFragments[i] == null)
-                    {
-                        continue;
-                    }
-                    var neighbors = adjacentList[i];
-                    foreach (var neighborIndex in neighbors)
-                    {
-                        if (newFragments[neighborIndex] == null)
-                        {
-                            continue;
-                        }
-                        var pair = (Mathf.Min(i, neighborIndex), Mathf.Max(i, neighborIndex));
-                        if (connectedPairs.Contains(pair))
-                        {
-                            continue;
-                        }
-                        var joint = newFragments[i].AddComponent<SpringJoint>();
-                        joint.connectedBody = newFragments[neighborIndex].GetComponent<Rigidbody>();
-                        joint.damper = 10;
-                        joint.spring = 100000;
-                        joint.breakForce = 0.01f;
-                        joint.breakTorque = 0.01f;
-                        joint.minDistance = 0;
-                        joint.maxDistance = 0;
-                        joint.enableCollision = true;
-                        joint.anchor = points[i];
-                        joint.autoConfigureConnectedAnchor = false;
-                        joint.connectedAnchor = points[neighborIndex];
-                        Vector3 v1 = newFragments[i].transform.TransformPoint(points[i]);
-                        Vector3 v2 = newFragments[neighborIndex].transform.TransformPoint(points[neighborIndex]);
-                        joint.tolerance = Vector3.Distance(v1, v2);
-                        connectedPairs.Add(pair);
-                    }
-                }
-
             }
         }
     }
