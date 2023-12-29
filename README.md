@@ -2,11 +2,19 @@
 
 为学习基础破碎算法和Unity Mesh编程，不使用任何第三方库，从零开始写代码。
 
-### 效果展示
-
 ![fracture.jpg](Screenshots/fracture.jpg)
 
 ![fracture3d.gif](Screenshots/fracture3d.gif)
+
+改进后的方法：外侧种子点合并为一个复合刚体
+
+**小范围破碎**
+
+![blob.png](Screenshots\blob.png)
+
+**大范围破碎**
+
+![range.png](Screenshots\range.png)
 
 ### 解算流程
 

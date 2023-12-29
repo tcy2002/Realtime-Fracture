@@ -14,11 +14,28 @@ namespace Fracture.MyVoronoi
         /// <param name="mesh">网格体</param>
         /// <param name="points">破碎种子点</param>
         /// <returns>破碎块网格体列表</returns>
-        public void Calculate(Mesh mesh, Vector3[] points, out List<Mesh> meshes, out List<List<int>> adjacentList)
+        public void Calculate(Mesh mesh, SamPoint[] points, out List<Mesh> insideMeshes, out List<Mesh> outsideMeshes)
         {
-            _delaunayCalculator.Triangulate(points);
-            meshes = SegMesh(mesh);
-            adjacentList = GetAdjacentList();
+            var pointsInside = new List<Vector3>();
+            var pointsOutside = new List<Vector3>();
+            foreach (var point in points)
+            {
+                if (point.Type == SamPoint.SamType.Outside)
+                {
+                    pointsOutside.Add(point.Position);
+                }
+                else
+                {
+                    pointsInside.Add(point.Position);
+                }
+            }
+            
+            var pointsAll = new List<Vector3>();
+            pointsAll.AddRange(pointsInside);
+            pointsAll.AddRange(pointsOutside);
+            
+            _delaunayCalculator.Triangulate(pointsAll.ToArray());
+            SegMesh(mesh, pointsInside.Count, pointsOutside.Count, out insideMeshes, out outsideMeshes);
         }
         
         /// <summary>
@@ -41,24 +58,22 @@ namespace Fracture.MyVoronoi
         /// </summary>
         /// <param name="mesh">需要切割的网格体</param>
         /// <returns>切割后的网格体列表</returns>
-        private List<Mesh> SegMesh(Mesh mesh)
+        private void SegMesh(Mesh mesh, int insideNum, int outsideNum, out List<Mesh> insideMeshes, out List<Mesh> outsideMeshes)
         {
-            var newMeshes = new List<Mesh>();
-            var count = _delaunayCalculator.GetPointCount();
+            insideMeshes = new List<Mesh>();
+            outsideMeshes = new List<Mesh>();
 
-            for (var i = 0; i < count; i++)
+            for (var i = 0; i < insideNum + outsideNum; i++)
             {
                 var newMesh = SegPoint(i, mesh);
                 if (newMesh == null)
                 {
-                    newMeshes.Add(newMesh);
+                    (i < insideNum ? insideMeshes : outsideMeshes).Add(newMesh);
                     continue;
                 }
                 newMesh.RecalculateNormals();
-                newMeshes.Add(newMesh);
+                (i < insideNum ? insideMeshes : outsideMeshes).Add(newMesh);
             }
-
-            return newMeshes;
         }
         
         /// <summary>
