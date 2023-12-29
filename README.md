@@ -10,11 +10,11 @@
 
 **小范围破碎**
 
-![blob.png](Screenshots\blob.png)
+![blob.png](Screenshots/blob.png)
 
 **大范围破碎**
 
-![range.png](Screenshots\range.png)
+![range.png](Screenshots/range.png)
 
 ### 解算流程
 
